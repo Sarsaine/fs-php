@@ -1,0 +1,35 @@
+ARG FROM_TAG=8
+FROM php:${FROM_TAG}-cli-alpine
+
+ARG APK_ADD="libzip-dev git zip"
+ARG APK_TEMP_ADD="pcre-dev coreutils"
+ARG PECL_INSTALL="xdebug"
+ARG DOCKER_PHP_EXT_INSTALL="zip"
+ARG DOCKER_PHP_EXT_ENABLE="xdebug"
+ENV XDEBUG_MODE debug
+
+RUN apk add --no-cache ${APK_ADD} ${APK_TEMP_ADD} ${PHPIZE_DEPS}
+RUN [ ${#DOCKER_PHP_EXT_INSTALL} -eq 0 ] || docker-php-ext-install ${DOCKER_PHP_EXT_INSTALL}
+RUN [ ${#PECL_INSTALL} -eq 0 ] || pecl install ${PECL_INSTALL}
+RUN [ ${#DOCKER_PHP_EXT_ENABLE} -eq 0 ] || docker-php-ext-enable ${DOCKER_PHP_EXT_ENABLE}
+
+RUN mkdir /app
+WORKDIR /app
+
+RUN addgroup --gid 1000 php && adduser -u 1000 -G php -s /bin/bash -D php
+USER php
+
+WORKDIR /tmp
+RUN curl https://getcomposer.org/installer > composer-setup.php
+RUN curl https://composer.github.io/installer.sha384sum > installer.sha384sum
+RUN sha384sum -c installer.sha384sum
+RUN php composer-setup.php
+RUN rm -f composer-setup.php
+
+USER root
+RUN apk del ${APK_TEMP_ADD} ${PHPIZE_DEPS}
+RUN mv composer.phar /usr/local/bin/composer
+COPY php.ini /usr/local/etc/php/php.ini
+
+WORKDIR /app
+USER php

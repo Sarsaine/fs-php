@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "default": {
+        "from": [],
+        "tags": {
+            "latest": {
+                "arguments": {
+                    "FROM_TAG": "8"
+                }
+            }
+        },
+        "arguments": {
+        },
+        "volumes": [
+            "$PWD:/app:z"
+        ],
+        "ports": [],
+        "interactive": true,
+        "detached": false,
+        "match_ids": true,
+        "workdir": "/app"
+    },
+    "commands": {
+        "php": {
+            "command": "php",
+            "enabled": true
+        },
+        "composer": {
+            "command": "composer",
+            "enabled": true,
+            "volumes": [
+                "$HOME/.composer:/tmp:z"
+            ]
+        }
+    }
+}
