@@ -28,6 +28,7 @@ RUN rm -f composer-setup.php
 
 USER root
 RUN apk del ${APK_TEMP_ADD} ${PHPIZE_DEPS}
+ENV COMPOSER_HOME /home/php/.composer
 RUN mv composer.phar /usr/local/bin/composer
 COPY php.ini /usr/local/etc/php/php.ini
 

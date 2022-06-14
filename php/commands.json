@@ -29,7 +29,7 @@
             "command": "composer",
             "enabled": true,
             "volumes": [
-                "$HOME/.composer:/tmp:z"
+                "$HOME/.composer:/home/php/.composer:z"
             ]
         }
     }
